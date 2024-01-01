@@ -1,0 +1,96 @@
+React-query
+
+What
+- A library for fetching data in react native application 
+
+Why 
+- useEffect hook for data fetching and useState hook to maintain component state like loading, error or resulting data.
+- If the data needed throughout the app, we need to use state management libraries
+
+Use
+1. As per above function use query use at least two argument first unique key and second one in function  
+    const {data, error, isLoading} = useQuery('dummy-data', () => {return axios.get('https://jsonplaceholder.typicode.com/todos'); });
+
+2. use of refetchOnMount is like if refetchOnMount value is false and when screen or component call query execute only one time but if refetchOnMount's value is always query execute every time whenever component ans creen call
+const {data, error, isLoading, isError, isFetching} = useQuery(
+    'dummy-data',
+    () => {
+      return axios.get('https://jsonplaceholder.typicode.com/todos');
+    },
+    {
+      refetchOnMount: false,
+
+      or 
+
+      refetchOnMount: 'always',
+    },
+  );
+
+3. uses of refetchInterval if set refetchInterval value like 2000 query refetch data automatically after every 2 second 
+const {data, error, isLoading, isError, isFetching} = useQuery(
+    'dummy-data',
+    () => {
+      return axios.get('https://jsonplaceholder.typicode.com/todos');
+    },
+    {
+      refetchInterval: 2000,
+    },
+  );
+
+4. uses of enabled is that if set false to enabled useQuery does not fetching data when screen or component call
+const {data, error, isLoading, isError, isFetching} = useQuery(
+    'dummy-data',
+    () => {
+      return axios.get('https://jsonplaceholder.typicode.com/todos');
+    },
+    {
+      enabled: false,
+    },
+  );
+
+  and also reactQuery provide refetch function which is use when need to call api on button press like below 
+  
+   const {data, error, isLoading, isError, isFetching, refetch}: useQuerytype =
+    useQuery(
+      'dummy-data',
+      () => {
+        return axios.get('https://jsonplaceholder.typicode.com/todos');
+      },
+      {
+        enabled: false,
+      },
+    );
+
+     <Button title="Fetch Data" onPress={refetch} />
+
+
+5. if we need to do some action when got success and got error from api we can use functiojn like below
+
+  const {data, error, isLoading, isError, isFetching, refetch}: useQuerytype =
+    useQuery(
+      'dummy-data',
+      () => {
+        return axios.get('https://jsonplaceholder.typicode.com/todos1');
+      },
+      {
+        enabled: false,
+        onError: onError,
+        onSuccess: onSuccess,
+      },
+    );
+
+6. below function is use for add, update or delete data using useMutation 
+  and uses of useQueryClient() is like when need updated data after chages in database then we can call queryClient.invalidateQueries and also pass same key which is provide while fetch data
+
+export const useAddSuperHeroData = () => {
+  const queryClient = useQueryClient()
+  return useMutation(addSuperHero, {
+     onSuccess: data => {
+        queryClient.invalidateQueries('super-heroes')
+     },
+  })
+}
+
+const addSuperHero = hero => {
+   return axios.post('http://localhost:4000/superheroes', hero)
+}
